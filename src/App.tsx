@@ -2,21 +2,32 @@ import { useState, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import "./App.css";
 
-const DEFAULT_CODE = `<!DOCTYPE html>
+const DEFAULT_CODE = `import confetti from "canvas-confetti";
+window.confetti = confetti;
+document.getElementById("root").innerHTML = \`<button onclick="confetti()">클릭</button>\`;`;
+
+function makeHtml(code: string) {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Playground</title>
+  <title>Confetti Example</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "canvas-confetti": "https://esm.sh/canvas-confetti"
+      }
+    }
+  </script>
 </head>
 <body>
-  <h1>Hello, Monaco + iframe!</h1>
-  <button onclick="alert('Hello!')">Click me</button>
-  <script>
-    // JS code here
-    console.log('Hello from JS!')
+  <div id="root"></div>
+  <script type="module">
+${code}
   </script>
 </body>
 </html>`;
+}
 
 function App() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -71,7 +82,7 @@ function App() {
             background: "#fff",
             display: "block",
           }}
-          srcDoc={code}
+          srcDoc={makeHtml(code)}
         />
       </div>
     </div>
